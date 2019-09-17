@@ -31,7 +31,7 @@ train_filename = 'assets/inputs/train.csv'
 # Category. However, I need to know the exact column names of the CSV file
 # (if they even exist).
 with open(train_filename) as train_file:
-    head = [next(train_file) for x in range(10)]
+    head = [next(train_file) for x in range(50)]
 # Fact #1: The actual name of the four columns are title, label_quality,
 # language, and category
 
@@ -62,9 +62,30 @@ for line in train_file:
 
 
 # Plotting a histogram to see how is the distribution of classes
-frequencies = list(class_counter.values())
-plt.hist(frequencies, bins='auto')
+class_frequencies = list(class_counter.values())
+plt.hist(class_frequencies, bins='auto')
 # Fact #5: There are many categories with less than 5000 elements (Block #1).
 # Between 5000 and 17500 (Block #2) in average there are less elements than in
 # Block #1. From this point onwards the distribution seems like the second half
 # of a normal distribution.
+
+
+# I want to know the distribution of the number of characters in the dataset
+char_counter = {}
+train_file = csv.reader(open(train_filename), delimiter=',')
+# Ignore header
+next(train_file, None)
+for line in train_file:
+    char_counter[len(line[0])] = char_counter.get(len(line[0]), 0) + 1
+# Fact #6: The number of characters in the dataset per element fluctuates
+# between 3 and 120.
+
+
+# Plotting a graphic to know how is the distribution of number of characters
+num_char_x = list(char_counter.keys())
+num_char_y = list(char_counter.values())
+plt.bar(num_char_x, num_char_y)
+# plt.bar(num_char_x[57:], num_char_y[57:])
+# Fact #7: The number of characters per title grows exponentially until 60
+# characters. From that point onwards, the distribution seems like a truncated
+# exponential distribution.
