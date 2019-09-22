@@ -1,2 +1,6 @@
 **/.DS_Store
 **/train.csv
+**/test.csv
+venv
+**/*.egg-info
+.eggs/
