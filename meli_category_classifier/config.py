@@ -18,23 +18,24 @@ class MeliClassifierConfig:
     # 2017 - Stronger Baselines for Trustable Results in Neural Machine
     # Translation
     vocab_size: int = 2**15
-    max_sequence_length: int = 120
-    max_features: int = 320000
-    embed_size: int = 300
+    max_sequence_length: int = 90
+    max_features: int = 10000
+    embed_size: int = 25
     single_feature_size: int = 1
     data_size: int = 20000000
     test_size: int = 0.05
 
     # Model
+    lang: str = 'es'
     num_classes: int = 1588
     pretrained_classifier: bool = False
     dropout_rate: float = 0.5
-    lstm_hidden_size: int = 16
+    lstm_hidden_size: int = 128
 
     # Training
     verbose: int = 1
     n_epochs: int = 1
-    batch_size: int = 1024
+    batch_size: int = 128
     num_training_samples: int = 18999195
     num_validation_samples: int = 1000805
 
@@ -51,8 +52,12 @@ class MeliClassifierConfig:
     output_directory: str = os.path.join(main_directory, 'assets', 'outputs')
     checkpoints_directory: str = os.path.join(main_directory, 'assets', 'checkpoints')
 
-    def __init__(self, pretrained_classifier=False):
+    def __init__(self, pretrained_classifier=False, lang='es',
+                 num_training_samples=18999195, num_validation_samples=1000805):
         self.pretrained_classifier = pretrained_classifier
+        self.lang = lang
+        self.num_training_samples = num_training_samples
+        self.num_validation_samples = num_validation_samples
 
     @classmethod
     def from_yaml(cls, path: str):

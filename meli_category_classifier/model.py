@@ -29,14 +29,14 @@ def meli_model(
     if isinstance(config, str):
         config = MeliClassifierConfig.from_yaml(config)
 
-    multibpemb = BPEmb(lang="multi", vs=config.max_features,
+    lang_bpemb = BPEmb(lang=config.lang, vs=config.max_features,
                        dim=config.embed_size)
 
     input_tokens = Input(shape=(config.max_sequence_length,), name='tokens')
     input_lang = Input(shape=(config.single_feature_size,), name='lang')
 
     x = Embedding(config.max_features, config.embed_size,
-                  weights=[multibpemb.vectors])(input_tokens)
+                  weights=[lang_bpemb.vectors])(input_tokens)
     x = LSTM(config.lstm_hidden_size, return_sequences=True,
              dropout=config.dropout_rate)(x)
     x = GlobalMaxPool1D()(x)

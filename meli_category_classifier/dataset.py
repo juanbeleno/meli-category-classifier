@@ -11,6 +11,7 @@ import csv
 import json
 import numpy as np
 from typing import Union
+import sys
 
 from .config import MeliClassifierConfig
 from .files import MeliClassifierFiles
@@ -45,15 +46,19 @@ def load_category_map(
     return category_map
 
 
-def split_train_test_data(
-        config: Union[str, MeliClassifierConfig] = MeliClassifierConfig()):
+def split_train_test_data():
     '''Split the raw dataset into test and training datasets'''
-    if isinstance(config, str):
-        config = MeliClassifierConfig.from_yaml(config)
-    files = MeliClassifierFiles(config)
+    es_config = MeliClassifierConfig(lang='es')
+    es_files = MeliClassifierFiles(es_config)
 
-    multibpemb = BPEmb(lang="multi", vs=config.max_features,
-                       dim=config.embed_size)
+    pt_config = MeliClassifierConfig(lang='pt')
+    pt_files = MeliClassifierFiles(pt_config)
+
+    es_bpemb = BPEmb(lang='es', vs=es_config.max_features,
+                       dim=es_config.embed_size)
+    pt_bpemb = BPEmb(lang='pt', vs=pt_config.max_features,
+                       dim=pt_config.embed_size)
+
     # Manual mapping for languages
     lang_map = {
         'spanish': 0,
@@ -61,19 +66,41 @@ def split_train_test_data(
     }
     category_map = load_category_map()
 
-    raw_file = csv.reader(open(files.raw_dataset), delimiter=',')
+    raw_file = csv.reader(open(es_files.raw_dataset), delimiter=',')
     # Ignore header
     next(raw_file, None)
+    es_max_sequence_length = 0
+    pt_max_sequence_length = 0
     for row in raw_file:
-        tokens = multibpemb.encode_ids(row[0])
-        tokens.extend([0] * (config.max_sequence_length - len(tokens)))
-        tokens.append(lang_map[row[2]])
-        tokens.append(category_map[row[3]])
-        line = ','.join(map(str, tokens))
+        if row[2] == 'spanish':
+            tokens = es_bpemb.encode_ids(row[0])
+            if len(tokens) > es_max_sequence_length:
+                es_max_sequence_length = len(tokens)
+            tokens.extend([0] * (es_config.max_sequence_length - len(tokens)))
+            tokens.append(lang_map[row[2]])
+            tokens.append(category_map[row[3]])
+            line = ','.join(map(str, tokens))
 
-        if np.random.rand() > config.test_size:
-            with open(files.train_dataset, 'a') as train_file:
-                train_file.write('{0}\n'.format(line))
+            if np.random.rand() > es_config.test_size:
+                with open(es_files.train_dataset, 'a') as train_file:
+                    train_file.write('{0}\n'.format(line))
+            else:
+                with open(es_files.test_dataset, 'a') as test_file:
+                    test_file.write('{0}\n'.format(line))
         else:
-            with open(files.test_dataset, 'a') as test_file:
-                test_file.write('{0}\n'.format(line))
+            tokens = pt_bpemb.encode_ids(row[0])
+            if len(tokens) > pt_max_sequence_length:
+                pt_max_sequence_length = len(tokens)
+            tokens.extend([0] * (pt_config.max_sequence_length - len(tokens)))
+            tokens.append(lang_map[row[2]])
+            tokens.append(category_map[row[3]])
+            line = ','.join(map(str, tokens))
+
+            if np.random.rand() > pt_config.test_size:
+                with open(pt_files.train_dataset, 'a') as train_file:
+                    train_file.write('{0}\n'.format(line))
+            else:
+                with open(pt_files.test_dataset, 'a') as test_file:
+                    test_file.write('{0}\n'.format(line))
+    print('ES MAX LENGTH: {}'.format(es_max_sequence_length), file=sys.stderr)
+    print('PT MAX LENGTH: {}'.format(pt_max_sequence_length), file=sys.stderr)
