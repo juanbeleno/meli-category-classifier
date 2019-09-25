@@ -15,6 +15,8 @@ class MeliClassifierFiles():
     _raw_data_filename: str = 'train.csv'
     _train_filename: str = '{}_train.csv'
     _test_filename: str = '{}_test.csv'
+    _result_input_filename: str = 'test.csv'
+    _result_filename: str = 'output.csv'
     _category_map_filename: str = 'category_map.json'
     _es_model_filename: str = f'es-meli-category-classifier-{__version__}.h5'
     _es_model_checkpoint: str = f'es-meli-category-classifier-{__version__}.hdf5'
@@ -39,6 +41,14 @@ class MeliClassifierFiles():
     @property
     def raw_dataset(self) -> str:
         return str(self._input_dir/self._raw_data_filename)
+
+    @property
+    def result_input_dataset(self) -> str:
+        return str(self._input_dir/self._result_input_filename)
+
+    @property
+    def result_dataset(self) -> str:
+        return str(self._output_dir/self._result_filename)
 
     @property
     def train_dataset(self) -> str:

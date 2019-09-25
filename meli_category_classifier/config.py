@@ -31,6 +31,7 @@ class MeliClassifierConfig:
     pretrained_classifier: bool = False
     dropout_rate: float = 0.5
     lstm_hidden_size: int = 128
+    word_dropout: float = 0.1
 
     # Training
     verbose: int = 1

@@ -8,5 +8,5 @@ Mercado Libre Category Classification
 
 `meliclassifier split-data config/es.yml`
 `meliclassifier split-data config/pt.yml`
-`meliclassifier train-model config/pt.yml`
+`meliclassifier train-model config/es.yml`
 `meliclassifier train-model config/pt.yml`

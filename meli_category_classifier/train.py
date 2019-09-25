@@ -25,6 +25,7 @@ def train_model(
     """Train the model and save classifier and feature weights."""
     if isinstance(config, str):
         config = MeliClassifierConfig.from_yaml(config)
+    config.pretrained_classifier = True
     files = MeliClassifierFiles(config)
     category_map = load_category_map()
 

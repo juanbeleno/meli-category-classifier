@@ -1,0 +1,5 @@
+# Config overrides
+# See meli_category_classifier.config.MeliClassifierConfig for defaults
+lang: pt
+num_training_samples: 9499273
+num_validation_samples: 500727

@@ -32,7 +32,9 @@ class DataGenerator(Sequence):
         # Get the csv data for row = idx
         for index in range(self.config.batch_size):
             data = next(self.data_reader)
-            tokens.append(data[:self.config.max_sequence_length])
+            random_tokens = self.apply_token_dropout(data[:self.config.max_sequence_length],
+                                                     self.config.word_dropout)
+            tokens.append(random_tokens)
             lang.append(data[self.config.max_sequence_length])
 
             category = int(data[self.config.max_sequence_length + 1])
@@ -48,3 +50,9 @@ class DataGenerator(Sequence):
         outputs = np.array(outputs)
 
         return inputs, outputs
+
+    def apply_token_dropout(self, tokens, dropout_rate):
+        '''Randomly deletes tokens in the list of tokens'''
+        random_tokens = [x for x in tokens if np.random.rand() > dropout_rate]
+        random_tokens.extend([0] * (len(tokens) - len(random_tokens)))
+        return random_tokens
