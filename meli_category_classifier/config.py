@@ -36,7 +36,7 @@ class MeliClassifierConfig:
     # Training
     verbose: int = 1
     n_epochs: int = 1
-    batch_size: int = 128
+    batch_size: int = 64
     num_training_samples: int = 18999195
     num_validation_samples: int = 1000805
 

@@ -46,6 +46,43 @@ def load_category_map(
     return category_map
 
 
+def save_class_weights(
+        config: Union[str, MeliClassifierConfig] = MeliClassifierConfig()):
+    '''Store the class weights'''
+    if isinstance(config, str):
+        config = MeliClassifierConfig.from_yaml(config)
+    files = MeliClassifierFiles(config)
+    category_map = load_category_map()
+
+    class_weights = {}
+    raw_file = csv.reader(open(files.raw_dataset), delimiter=',')
+    # Ignore header
+    next(raw_file, None)
+    for line in raw_file:
+        category = category_map[line[3]]
+        class_weights[category] = class_weights.get(category, 0) + 1
+
+    for key in class_weights:
+        class_weights[key] = 1.0 / class_weights[key]
+
+    with open(files.class_weights, 'w') as json_file:
+        json.dump(class_weights, json_file)
+
+
+def load_class_weights(
+        config: Union[str, MeliClassifierConfig] = MeliClassifierConfig()):
+    '''Get the class weights from a json file'''
+    if isinstance(config, str):
+        config = MeliClassifierConfig.from_yaml(config)
+    files = MeliClassifierFiles(config)
+    with open(files.class_weights) as json_file:
+        class_weights = json.load(json_file)
+    clean_class_weights = {}
+    for key in class_weights:
+        clean_class_weights[int(key)] = class_weights[key]
+    return clean_class_weights
+
+
 def split_train_test_data():
     '''Split the raw dataset into test and training datasets'''
     es_config = MeliClassifierConfig(lang='es')

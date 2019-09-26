@@ -18,6 +18,8 @@ class MeliClassifierFiles():
     _result_input_filename: str = 'test.csv'
     _result_filename: str = 'output.csv'
     _category_map_filename: str = 'category_map.json'
+    _class_weights_filename: str = 'class_weights.json'
+    _lang_class_weights: str = '{}_class_weights.json'
     _es_model_filename: str = f'es-meli-category-classifier-{__version__}.h5'
     _es_model_checkpoint: str = f'es-meli-category-classifier-{__version__}.hdf5'
     _pt_model_filename: str = f'pt-meli-category-classifier-{__version__}.h5'
@@ -67,6 +69,10 @@ class MeliClassifierFiles():
     @property
     def category_map(self) -> str:
         return str(self._processed_dir/self._category_map_filename)
+
+    @property
+    def class_weights(self) -> str:
+        return str(self._processed_dir/self._class_weights_filename)
 
     @property
     def model_checkpoint(self) -> str:
