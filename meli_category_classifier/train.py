@@ -8,10 +8,9 @@ Created on Fri Sep 20 21:26:44 2019
 """
 from .config import MeliClassifierConfig
 from .data_generator import DataGenerator
-from .dataset import load_category_map, load_class_weights
+from .dataset import load_category_map
 from .files import MeliClassifierFiles
 from .model import meli_model
-from bpemb import BPEmb
 from typing import Union
 from tensorflow.python.keras.callbacks import (
     ReduceLROnPlateau, ModelCheckpoint
@@ -25,10 +24,9 @@ def train_model(
     """Train the model and save classifier and feature weights."""
     if isinstance(config, str):
         config = MeliClassifierConfig.from_yaml(config)
-    config.pretrained_classifier = True
+    # config.pretrained_classifier = True
     files = MeliClassifierFiles(config)
     category_map = load_category_map()
-    class_weights = load_class_weights()
 
     training_generator = DataGenerator(
         files.train_dataset, category_map, config.num_training_samples, config)
@@ -51,8 +49,7 @@ def train_model(
         validation_steps=(config.num_validation_samples // config.batch_size),
         verbose=config.verbose,
         callbacks=[reduce_lr, model_checkpoint],
-        use_multiprocessing=True,
-        class_weight=class_weights)
+        use_multiprocessing=True)
 
     model = load_model(files.model_checkpoint)
     model.save_weights(files.model_weights, overwrite=True)

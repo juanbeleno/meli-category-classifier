@@ -37,12 +37,12 @@ def meli_model(
 
     x = Embedding(config.max_features, config.embed_size,
                   weights=[lang_bpemb.vectors])(input_tokens)
-    x = LSTM(config.lstm_hidden_size, return_sequences=True,
-             dropout=config.dropout_rate)(x)
+    x = Bidirectional(LSTM(config.lstm_hidden_size, return_sequences=True,
+             dropout=config.dropout_rate))(x)
     x = GlobalMaxPool1D()(x)
     x = concatenate([x, input_lang])
     x = Dense(config.num_classes, activation="linear")(x)
-    # x = Dropout(config.dropout_rate)(x)
+    x = Dropout(config.dropout_rate)(x)
     x = Dense(config.num_classes, activation="softmax")(x)
     model = Model(inputs=[input_tokens, input_lang], outputs=x)
     model.compile(

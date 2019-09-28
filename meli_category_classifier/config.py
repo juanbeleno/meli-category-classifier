@@ -20,7 +20,7 @@ class MeliClassifierConfig:
     vocab_size: int = 2**15
     max_sequence_length: int = 90
     max_features: int = 10000
-    embed_size: int = 25
+    embed_size: int = 50
     single_feature_size: int = 1
     data_size: int = 20000000
     test_size: int = 0.05
@@ -29,8 +29,8 @@ class MeliClassifierConfig:
     lang: str = 'es'
     num_classes: int = 1588
     pretrained_classifier: bool = False
-    dropout_rate: float = 0.5
-    lstm_hidden_size: int = 128
+    dropout_rate: float = 0.1
+    lstm_hidden_size: int = 64
     word_dropout: float = 0.1
 
     # Training
